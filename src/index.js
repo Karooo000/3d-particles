@@ -1,6 +1,9 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
+
+import Model from './model';
+
 /*------------------------------
 Renderer
 ------------------------------*/
@@ -34,7 +37,7 @@ const material = new THREE.MeshBasicMaterial( {
   color: 0x00ff00,
 } );
 const cube = new THREE.Mesh( geometry, material );
-scene.add( cube );
+//scene.add( cube );
 
 
 /*------------------------------
@@ -46,10 +49,47 @@ const controls = new OrbitControls( camera, renderer.domElement );
 /*------------------------------
 Helpers
 ------------------------------*/
-const gridHelper = new THREE.GridHelper( 10, 10 );
+/* const gridHelper = new THREE.GridHelper( 10, 10 );
 scene.add( gridHelper );
 const axesHelper = new THREE.AxesHelper( 5 );
-scene.add( axesHelper );
+scene.add( axesHelper ); */
+
+/*------------------------------
+Models
+------------------------------*/
+const skull = new Model({
+  name: "skull",
+  file: "./models/skull.glb",
+  scene: scene,
+  placeOnLoad: true
+})
+
+const horse = new Model({
+  name: "horse",
+  file: "./models/horse.glb",
+  scene: scene,
+  placeOnLoad: false
+})
+
+/*------------------------------
+Controllers
+------------------------------*/
+const buttons = document.querySelectorAll(".button")
+
+buttons[0].addEventListener("click", (e) => {
+  skull.add()
+  horse.remove()
+})
+
+buttons[1].addEventListener("click", (e) => {
+  horse.add()
+  skull.remove()
+})
+
+/*------------------------------
+Clock
+------------------------------*/
+const clock = new THREE.Clock()
 
 
 /*------------------------------
@@ -58,7 +98,15 @@ Loop
 const animate = function () {
   requestAnimationFrame( animate );
   renderer.render( scene, camera );
-};
+
+    if(skull.isActive){
+      skull.particlesMaterial.uniforms.uTime.value = clock.getElapsedTime()
+    };
+
+    if(horse.isActive){
+      horse.particlesMaterial.uniforms.uTime.value = clock.getElapsedTime()
+    };
+  }
 animate();
 
 
