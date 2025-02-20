@@ -1,4 +1,5 @@
 import * as THREE from "three"
+import gsap from "gsap"
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader.js"
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js"
 import {MeshSurfaceSampler} from "three/examples/jsm/math/MeshSurfaceSampler.js"
@@ -61,6 +62,7 @@ class Model {
             fragmentShader,
             uniforms: {
                 uTime: {value: 0.0},
+                uScale: {value: 0.0}
             }
            })
 
@@ -120,11 +122,23 @@ class Model {
     add(){
         this.scene.add(this.particles)
         this.isActive = true
+
+        gsap.to(this.particlesMaterial.uniforms.uScale, {
+            value: 1, 
+            duration: 2
+        })
     }
 
     remove(){
-        this.scene.remove(this.particles)
-        this.isActive = false
+        
+        gsap.to(this.particlesMaterial.uniforms.uScale, {
+            value: 0,
+            onComplete: () => {
+                this.scene.remove(this.particles)
+                this.isActive = false
+
+            }
+        })
     }
 }
 
