@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import gsap from "gsap"
 
 
 import Model from './model';
@@ -27,6 +28,9 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.z = 5;
 camera.position.y = 1;
+
+scene.rotation.y = Math.PI/6
+
 
 
 /*------------------------------
@@ -119,3 +123,24 @@ function onWindowResize() {
   renderer.setSize( window.innerWidth, window.innerHeight );
 }
 window.addEventListener( 'resize', onWindowResize, false );
+
+/*------------------------------
+Mouse Move
+------------------------------*/
+function onMouseMove(e){
+  const x = e.clientX
+  const y = e.clientY
+
+  gsap.to(scene.rotation, {
+    y: gsap.utils.mapRange(0, window.innerWidth, 0.1, -0.1, x),
+    x: gsap.utils.mapRange(0, window.innerHeight, 0.1, -0.1, y),
+
+    //ease: "power1.inOut"
+    //y: gsap.utils.mapRange(0, window.innerWidth, 0.1, -0.1, x),
+    duration: 0.75, // Adjust the duration for damping effect
+    ease: "power1.out" // Use an easing function for smooth damping
+  })
+}
+
+
+window.addEventListener("mousemove", onMouseMove)

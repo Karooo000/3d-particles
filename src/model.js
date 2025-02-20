@@ -57,12 +57,15 @@ class Model {
             ------------------------------*/
            //this.particlesMaterial = new THREE.PointsMaterial({size: 0.01})
 
+           const texture = new THREE.TextureLoader().load('/Skull.jpg' ); 
+
            this.particlesMaterial = new THREE.ShaderMaterial({
             vertexShader,
             fragmentShader,
             uniforms: {
                 uTime: {value: 0.0},
-                uScale: {value: 0.0}
+                uScale: {value: 0.0},
+                uTexture: texture
             }
            })
 
@@ -121,12 +124,25 @@ class Model {
     
     add(){
         this.scene.add(this.particles)
-        this.isActive = true
-
+        
         gsap.to(this.particlesMaterial.uniforms.uScale, {
             value: 1, 
-            duration: 2
+            duration: 1,
+            ease: "power3.inOut",
+            delay: 0.3
         })
+        
+        if(!this.isActive){
+            
+            gsap.fromTo(this.particles.rotation, {
+                y: Math.PI
+            }, {
+                y: 0,
+                duration: 1
+            })
+        }
+
+        this.isActive = true
     }
 
     remove(){
@@ -138,6 +154,12 @@ class Model {
                 this.isActive = false
 
             }
+        })
+
+        gsap.to(this.particles.rotation, {
+            y: Math.PI,
+            duration: 1,
+            ease: "power3.out"
         })
     }
 }
